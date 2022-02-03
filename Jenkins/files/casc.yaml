@@ -1,0 +1,128 @@
+jenkins:
+  systemMessage: "MY JENKINS"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+       - id: ${JENKINS_ADMIN_ID}
+         password: ${JENKINS_ADMIN_PASSWORD}
+security:
+  queueItemAuthenticator:
+    authenticators:
+    - global:
+        strategy: triggeringUsersAuthorizationStrategy
+unclassified:
+  location:
+    adminAddress: "my@gmail.com"
+    url: http://localhost:8080/
+  mailer:
+    authentication:
+      password: ${MAIL_PASSWORD}
+      username: ${MAIL_USER}
+    charset: "UTF-8"
+    smtpHost: "smtp.gmail.com"
+    smtpPort: "465"
+    useSsl: true
+    useTls: false
+  buildTimestamp:
+    enableBuildTimestamp: true
+    extraProperties:
+    - key: "RELEASE_DATE"
+      shiftExpression: "- 0 days 0 hours 0 minutes"
+      value: "dd/MM/yyyy-HHmmss"
+    pattern: "yyyy-MM-dd HH:mm:ss z"
+    timezone: "America/Sao_Paulo"
+  globalConfigFiles:
+    configs:
+    - globalMavenSettings:
+        comment: "Global settings"
+        content: |
+          <settings>
+              <mirrors>
+                  <mirror>
+                      <id>nexus</id>
+                      <mirrorOf>*</mirrorOf>
+                      <url>http://nexus:8081/repository/maven-public/</url>
+                  </mirror>
+              </mirrors>
+              <profiles>
+                  <profile>
+                      <id>nexus</id>
+                      <properties>
+                          <scm.username>myuser</scm.username>
+                          <scm.password>mypass</scm.password>
+                          <apt.user>admin</apt.user>
+                          <apt.password>admin123</apt.password>
+                          <downloadSources>true</downloadSources>
+                          <downloadJavadocs>true</downloadJavadocs>
+                      </properties>
+                      <repositories>
+                          <repository>
+                              <id>central</id>
+                              <url>http://nexus:8081/repository/maven-releases/</url>
+                              <releases><enabled>true</enabled></releases>
+                              <snapshots><enabled>false</enabled></snapshots>
+                          </repository>
+                          <repository>
+                              <id>snapshots</id>
+                              <url>http://nexus:8081/repository/maven-snapshots/</url>
+                              <releases><enabled>false</enabled></releases>
+                              <snapshots><enabled>true</enabled></snapshots>
+                          </repository>
+                      </repositories>
+                      <pluginRepositories>
+                          <pluginRepository>
+                              <id>central</id>
+                              <url>http://central</url>
+                              <releases><enabled>true</enabled></releases>
+                              <snapshots><enabled>true</enabled></snapshots>
+                          </pluginRepository>
+                      </pluginRepositories>
+                  </profile>
+              </profiles>
+              <activeProfiles>
+                  <activeProfile>nexus</activeProfile>
+              </activeProfiles>
+              <servers>
+                  <server>
+                      <id>nexus</id>
+                      <username>admin</username>
+                      <password>adm123</password>
+                  </server>
+              </servers>
+          </settings>
+        id: "maven-settings.xml"
+        isReplaceAll: true
+        name: "MyGlobalSettings"
+        providerId: "org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig"
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  jdk:
+    installations:
+    - home: "/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64/"
+      name: "Default"
+  maven:
+    installations:
+    - name: "Default"
+      properties:
+      - installSource:
+          installers:
+          - maven:
+              id: "3.8.4"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  nodejs:
+    installations:
+    - name: "Default"
+      properties:
+      - installSource:
+          installers:
+          - nodeJSInstaller:
+              force32Bit: true
+              id: "15.14.0"
+              npmPackages: "bower grunt@1.4.1 gulp@3.5.6 ionic@2.1.18 cordova@8.0.0"
+              npmPackagesRefreshHours: 6240

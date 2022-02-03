@@ -1,0 +1,26 @@
+version: '3'
+services:
+
+  nexus:
+    container_name: 'nexus'
+    build: ./Nexus
+    ports:
+      - 8081:8081
+    volumes:
+      - ./Nexus/data/:/nexus-data/
+
+  jenkins:
+    container_name: 'jenkins'
+    build: ./Jenkins
+    ports:
+      - 8080:8080
+    environment:
+      - JENKINS_ADMIN_ID=admin
+      - JENKINS_ADMIN_PASSWORD=admin
+      - MAIL_USER=me@gmail.com
+      - MAIL_PASSWORD=mypass
+    volumes:
+      - ./Jenkins/jobs:/var/jenkins_home/jobs
+    depends_on:
+      - nexus
+
